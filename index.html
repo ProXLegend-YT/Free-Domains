@@ -584,6 +584,7 @@
   let currentStep = 0;
   let isAvailable = false;
   let recordType = "A";
+  let confirmedSubdomain = "";
 
   // ── DOM helpers ─────────────────────────────────────────
   const $ = (id) => document.getElementById(id);
@@ -651,6 +652,7 @@
   function goToStep1() {
     if (!isAvailable) return;
     const sub = $("subdomainInput").value.trim();
+    confirmedSubdomain = sub;
     $("confirmDomain").textContent = `${sub}.${BASE_DOMAIN}`;
     setStep(1);
   }
@@ -703,7 +705,7 @@
 
   // ── Register subdomain ───────────────────────────────────
   async function registerSubdomain() {
-    const sub = $("subdomainInput").value.trim();
+    const sub = confirmedSubdomain;
     const target = $("targetInput").value.trim();
 
     if (!sub || !target) {
