@@ -104,9 +104,14 @@
 <body>
 
 <header>
-  <div class="logo">
-    <div class="logo-mark">◈</div>
-    <span class="logo-text">SubForge</span>
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:460px;margin-bottom:10px">
+    <div class="logo" style="margin-bottom:0">
+      <div class="logo-mark">◈</div>
+      <span class="logo-text">SubForge</span>
+    </div>
+    <a href="/dashboard.html" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;background:rgba(124,111,255,0.12);border:1px solid rgba(124,111,255,0.3);color:#7c6fff;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(124,111,255,0.22)'" onmouseout="this.style.background='rgba(124,111,255,0.12)'">
+      ◫ Dashboard
+    </a>
   </div>
   <p class="tagline">Claim a free subdomain in seconds</p>
 </header>
@@ -196,6 +201,7 @@
         <p>3. Visit your domain after propagation completes</p>
       </div>
       <div class="btn-row" style="margin-top:20px">
+        <button class="btn btn-ghost" onclick="window.location.href='/dashboard.html'">◫ Dashboard</button>
         <button class="btn btn-primary" onclick="reset()">Register Another</button>
       </div>
     </div>
@@ -203,7 +209,7 @@
 
 </div>
 
-<footer>SubForge · Powered by Cloudflare DNS · Free forever</footer>
+<footer>SubForge · Powered by Cloudflare DNS · Free forever · <a href="/dashboard.html" style="color:#7c6fff;text-decoration:none">Dashboard →</a></footer>
 
 <script>
   // ── Domains config ─────────────────────────────────────
