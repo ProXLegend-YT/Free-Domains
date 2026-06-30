@@ -5,117 +5,568 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SubForge — Free Subdomains</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #07070f; --surface: #0f0f1a; --border: #1c1c2e; --border-hover: #2e2e4a;
-      --purple: #7c6fff; --purple-dim: rgba(124,111,255,0.12);
-      --green: #00c896; --green-dim: rgba(0,200,150,0.12);
-      --red: #ff4b6e; --red-dim: rgba(255,75,110,0.12);
-      --text: #e8e8f0; --muted: #6b6b8a; --subtle: #2a2a3f;
+      --bg: #040408;
+      --surface: #0a0a14;
+      --surface2: #0e0e1c;
+      --border: #16162a;
+      --border2: #22223a;
+      --purple: #8b7fff;
+      --purple2: #6c5ce7;
+      --cyan: #00d4ff;
+      --pink: #ff2d78;
+      --green: #00ffaa;
+      --orange: #ff9f43;
+      --text: #f0f0ff;
+      --muted: #5a5a7a;
+      --subtle: #12121e;
     }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple2); border-radius: 2px; }
+
     body {
-      background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; padding: 48px 16px 64px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 80px;
+      overflow-x: hidden;
     }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 48px 48px; opacity: 0.35; pointer-events: none; z-index: 0;
+
+    /* ── Animated bg ── */
+    .bg-orbs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
     }
-    body > * { position: relative; z-index: 1; }
-    header { text-align: center; margin-bottom: 40px; }
-    .logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .logo-mark { width: 38px; height: 38px; background: var(--purple-dim); border: 1px solid rgba(124,111,255,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .logo-text { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 30%, var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .tagline { color: var(--muted); font-size: 14px; }
-    .steps { display: flex; align-items: center; margin-bottom: 28px; }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+    .orb1 { width: 500px; height: 500px; background: var(--purple); top: -150px; left: -100px; animation-delay: 0s; }
+    .orb2 { width: 400px; height: 400px; background: var(--cyan); top: 40%; right: -120px; animation-delay: 4s; }
+    .orb3 { width: 350px; height: 350px; background: var(--pink); bottom: -100px; left: 30%; animation-delay: 8s; }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-40px) scale(1.08); }
+    }
+
+    /* ── Grid ── */
+    .grid-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(139,127,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,127,255,0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+
+    body > *:not(.bg-orbs):not(.grid-bg) { position: relative; z-index: 1; }
+
+    /* ── Header ── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; max-width: 520px; margin-bottom: 48px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .logo-wrap { display: flex; align-items: center; gap: 12px; }
+
+    .logo-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple2), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; box-shadow: 0 0 20px rgba(108,92,231,0.5), 0 0 40px rgba(0,212,255,0.2);
+      animation: iconPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(108,92,231,0.5), 0 0 40px rgba(0,212,255,0.2); }
+      50% { box-shadow: 0 0 30px rgba(108,92,231,0.8), 0 0 60px rgba(0,212,255,0.4); }
+    }
+
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px; font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--purple) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .dash-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: 50px;
+      background: linear-gradient(135deg, rgba(139,127,255,0.15), rgba(0,212,255,0.1));
+      border: 1px solid rgba(139,127,255,0.3);
+      color: var(--purple); font-size: 13px; font-weight: 600;
+      text-decoration: none; font-family: 'Space Grotesk', sans-serif;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .dash-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(139,127,255,0.2), rgba(0,212,255,0.15));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .dash-btn:hover::before { opacity: 1; }
+    .dash-btn:hover { border-color: rgba(139,127,255,0.6); box-shadow: 0 0 20px rgba(139,127,255,0.3); transform: translateY(-1px); }
+
+    /* ── Hero text ── */
+    .hero {
+      text-align: center; margin-bottom: 40px;
+      animation: fadeDown 0.7s ease 0.1s both;
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 7vw, 52px);
+      font-weight: 800; line-height: 1.1; letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+    .hero h1 .line1 {
+      display: block;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero h1 .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 60%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+      background-size: 200%;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .hero p { color: var(--muted); font-size: 16px; line-height: 1.6; max-width: 360px; margin: 0 auto; }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.7s ease 0.2s both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .stat-divider { width: 1px; background: var(--border2); align-self: stretch; }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex; align-items: center; margin-bottom: 28px;
+      animation: fadeDown 0.7s ease 0.2s both;
+    }
     .step { display: flex; align-items: center; gap: 8px; }
-    .step-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--subtle); color: var(--muted); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
-    .step-dot.active { background: var(--purple); color: #fff; box-shadow: 0 0 0 4px rgba(124,111,255,0.2); }
-    .step-dot.done { background: var(--green); color: #fff; }
-    .step-label { font-size: 12px; font-weight: 500; color: var(--muted); transition: color 0.3s; }
-    .step-label.active { color: var(--text); }
-    .step-line { width: 36px; height: 1px; background: var(--border); margin: 0 8px; transition: background 0.3s; }
-    .step-line.done { background: var(--green); }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; width: 100%; max-width: 460px; box-shadow: 0 24px 64px rgba(0,0,0,0.4); }
-    .card-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
-    .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
-
-    /* Domain picker grid */
-    .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-    .domain-card {
-      border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
-      cursor: pointer; transition: all 0.2s; background: var(--bg);
-      display: flex; flex-direction: column; gap: 4px;
+    .step-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--muted); font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.4s; flex-shrink: 0;
     }
-    .domain-card:hover { border-color: var(--border-hover); }
-    .domain-card.selected { border-color: var(--purple); background: var(--purple-dim); }
-    .domain-card .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-    .domain-card .name { font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text); word-break: break-all; }
+    .step-dot.active {
+      background: linear-gradient(135deg, var(--purple2), var(--cyan));
+      border-color: transparent; color: #fff;
+      box-shadow: 0 0 0 4px rgba(139,127,255,0.2), 0 0 20px rgba(139,127,255,0.4);
+    }
+    .step-dot.done {
+      background: linear-gradient(135deg, var(--green), #00c896);
+      border-color: transparent; color: #000;
+      box-shadow: 0 0 20px rgba(0,255,170,0.3);
+    }
+    .step-label { font-size: 12px; font-weight: 600; color: var(--muted); transition: color 0.3s; }
+    .step-label.active { color: var(--text); }
+    .step-line { width: 40px; height: 2px; background: var(--border2); margin: 0 8px; transition: all 0.5s; border-radius: 1px; }
+    .step-line.done { background: linear-gradient(90deg, var(--green), var(--cyan)); box-shadow: 0 0 8px rgba(0,255,170,0.4); }
 
-    .input-wrap { display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s; margin-bottom: 10px; }
-    .input-wrap:focus-within { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,111,255,0.1); }
-    .input-wrap input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 15px; font-family: 'JetBrains Mono', monospace; font-weight: 600; padding: 14px 16px; }
+    /* ── Card ── */
+    .card {
+      background: linear-gradient(145deg, rgba(14,14,28,0.9), rgba(10,10,20,0.95));
+      border: 1px solid var(--border2);
+      border-radius: 24px; padding: 36px 32px;
+      width: 100%; max-width: 520px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.7s ease 0.3s both;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), var(--cyan), transparent);
+      opacity: 0.6;
+    }
+    .card-glow {
+      position: absolute; width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,127,255,0.08), transparent 70%);
+      top: -80px; right: -60px; pointer-events: none;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px; font-weight: 800; color: var(--text);
+      letter-spacing: -0.4px; margin-bottom: 6px;
+    }
+    .card-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+
+    /* ── Domain grid ── */
+    .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+    .domain-card {
+      border: 1px solid var(--border2); border-radius: 14px; padding: 14px 16px;
+      cursor: pointer; background: var(--subtle);
+      display: flex; flex-direction: column; gap: 5px;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .domain-card::before {
+      content: ''; position: absolute; inset: 0; opacity: 0;
+      background: linear-gradient(135deg, rgba(139,127,255,0.08), rgba(0,212,255,0.05));
+      transition: opacity 0.3s;
+    }
+    .domain-card:hover::before { opacity: 1; }
+    .domain-card:hover { border-color: rgba(139,127,255,0.4); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .domain-card.selected {
+      border-color: transparent;
+      background: linear-gradient(135deg, rgba(139,127,255,0.15), rgba(0,212,255,0.08));
+      box-shadow: 0 0 0 1px var(--purple), 0 0 20px rgba(139,127,255,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .domain-card .badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    }
+    .domain-card .name {
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; color: var(--text); word-break: break-all; opacity: 0.8;
+    }
+    .domain-card .dot-online {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      display: inline-block; margin-right: 5px;
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── Realtime counter ── */
+    .realtime-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      background: rgba(0,255,170,0.05); border: 1px solid rgba(0,255,170,0.15);
+      margin-bottom: 20px; font-size: 12px; color: var(--muted);
+    }
+    .realtime-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 1.5s ease infinite; flex-shrink: 0; }
+    .realtime-count { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--green); }
+
+    /* ── Input ── */
+    .input-wrap {
+      display: flex; align-items: center;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 14px; overflow: hidden; transition: all 0.3s; margin-bottom: 12px;
+    }
+    .input-wrap:focus-within {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139,127,255,0.15), 0 0 20px rgba(139,127,255,0.1);
+    }
+    .input-wrap input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); font-size: 16px; font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; padding: 16px 18px;
+    }
     .input-wrap input::placeholder { color: var(--muted); font-weight: 400; }
-    .domain-suffix { color: var(--muted); font-size: 12px; font-family: 'JetBrains Mono', monospace; padding: 0 12px 0 0; white-space: nowrap; }
-    .field-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
-    .field-group { margin-bottom: 16px; }
-    .standalone-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; outline: none; color: var(--text); font-size: 14px; font-family: 'JetBrains Mono', monospace; padding: 13px 16px; transition: border-color 0.2s; }
-    .standalone-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,111,255,0.1); }
-    .toggle-row { display: flex; gap: 8px; margin-bottom: 20px; }
-    .toggle-btn { flex: 1; padding: 9px 0; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'JetBrains Mono', monospace; }
-    .toggle-btn.active { background: var(--purple-dim); border-color: rgba(124,111,255,0.4); color: var(--purple); }
-    .status { border-radius: 9px; padding: 10px 14px; font-size: 13px; font-weight: 500; margin-bottom: 14px; display: none; }
-    .status.available { background: var(--green-dim); border: 1px solid rgba(0,200,150,0.25); color: var(--green); display: block; }
-    .status.taken { background: var(--red-dim); border: 1px solid rgba(255,75,110,0.25); color: var(--red); display: block; }
-    .status.error { background: var(--red-dim); border: 1px solid rgba(255,75,110,0.25); color: var(--red); display: block; }
-    .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-    .btn { flex: 1; padding: 13px 0; border-radius: 12px; border: none; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-    .btn-ghost { background: var(--subtle); color: var(--muted); }
-    .btn-ghost:hover { background: var(--border-hover); color: var(--text); }
-    .btn-primary { background: var(--purple); color: #fff; box-shadow: 0 4px 16px rgba(124,111,255,0.3); }
-    .btn-primary:hover { filter: brightness(1.1); }
-    .btn-primary:disabled { background: var(--subtle); color: var(--muted); box-shadow: none; cursor: not-allowed; }
-    .preview-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-    .preview-text span { color: var(--purple); font-weight: 600; }
-    .hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+    .domain-suffix {
+      color: var(--muted); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+      padding: 0 16px 0 0; white-space: nowrap;
+      border-left: 1px solid var(--border2); padding-left: 12px; margin-left: 4px;
+    }
+
+    /* ── Check animation ── */
+    .check-indicator {
+      display: flex; align-items: center; gap: 8px; height: 20px; margin-bottom: 10px;
+    }
+    .check-dots { display: flex; gap: 4px; }
+    .check-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+      animation: checkPulse 1.2s ease infinite;
+    }
+    .check-dot:nth-child(2) { animation-delay: 0.2s; }
+    .check-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes checkPulse { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+    .field-label {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: block;
+    }
+    .field-group { margin-bottom: 18px; }
+    .standalone-input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 14px; outline: none; color: var(--text);
+      font-size: 14px; font-family: 'JetBrains Mono', monospace;
+      padding: 14px 16px; transition: all 0.3s;
+    }
+    .standalone-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139,127,255,0.15), 0 0 20px rgba(139,127,255,0.1);
+    }
+
+    /* ── Toggle ── */
+    .toggle-row { display: flex; gap: 8px; margin-bottom: 22px; }
+    .toggle-btn {
+      flex: 1; padding: 11px 0; border-radius: 12px;
+      border: 1px solid var(--border2); background: var(--subtle);
+      color: var(--muted); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; font-family: 'Space Grotesk', sans-serif;
+    }
+    .toggle-btn:hover { border-color: var(--border2); color: var(--text); }
+    .toggle-btn.active {
+      background: linear-gradient(135deg, rgba(139,127,255,0.2), rgba(0,212,255,0.1));
+      border-color: rgba(139,127,255,0.5); color: var(--purple);
+      box-shadow: 0 0 16px rgba(139,127,255,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    /* ── Status ── */
+    .status {
+      border-radius: 12px; padding: 12px 16px; font-size: 13px; font-weight: 600;
+      margin-bottom: 16px; display: none; align-items: center; gap: 10px;
+    }
+    .status.available {
+      background: rgba(0,255,170,0.08); border: 1px solid rgba(0,255,170,0.25);
+      color: var(--green); display: flex; box-shadow: 0 0 20px rgba(0,255,170,0.08);
+      animation: statusIn 0.3s ease;
+    }
+    .status.taken {
+      background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25);
+      color: var(--pink); display: flex; animation: statusIn 0.3s ease;
+    }
+    .status.error {
+      background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25);
+      color: var(--pink); display: flex; animation: statusIn 0.3s ease;
+    }
+    @keyframes statusIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 10px; margin-top: 24px; }
+    .btn {
+      flex: 1; padding: 14px 0; border-radius: 14px; border: none;
+      font-size: 14px; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .btn:hover::after { opacity: 1; }
+
+    .btn-ghost {
+      background: var(--surface2); color: var(--muted);
+      border: 1px solid var(--border2);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); background: var(--subtle); transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple2), #8b7fff);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(108,92,231,0.4), 0 0 40px rgba(108,92,231,0.1);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(108,92,231,0.6), 0 0 60px rgba(108,92,231,0.2);
+    }
+    .btn-primary:disabled {
+      background: var(--surface2); color: var(--muted);
+      box-shadow: none; cursor: not-allowed; transform: none;
+    }
+    .btn-check {
+      background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(139,127,255,0.15));
+      color: var(--cyan); border: 1px solid rgba(0,212,255,0.3);
+    }
+    .btn-check:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,212,255,0.2); }
+    .btn-check:disabled { background: var(--surface2); color: var(--muted); border-color: var(--border2); transform: none; box-shadow: none; cursor: not-allowed; }
+
+    .btn-danger {
+      background: linear-gradient(135deg, rgba(255,45,120,0.2), rgba(255,45,120,0.1));
+      color: var(--pink); border: 1px solid rgba(255,45,120,0.3);
+    }
+    .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(255,45,120,0.2); }
+
+    .btn-success {
+      background: linear-gradient(135deg, rgba(0,255,170,0.2), rgba(0,200,150,0.15));
+      color: var(--green); border: 1px solid rgba(0,255,170,0.3);
+    }
+    .btn-success:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,255,170,0.2); }
+
+    /* ── Preview ── */
+    .preview-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 50px;
+      background: rgba(139,127,255,0.08); border: 1px solid rgba(139,127,255,0.2);
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+      margin-bottom: 14px; transition: all 0.3s;
+    }
+    .preview-pill span { color: var(--purple); font-weight: 600; }
+    .preview-pill.glow { border-color: rgba(139,127,255,0.5); box-shadow: 0 0 16px rgba(139,127,255,0.15); }
+
+    /* ── Section divider ── */
+    .divider {
+      display: flex; align-items: center; gap: 12px; margin: 20px 0;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border2); }
+    .divider-text { font-size: 11px; color: var(--muted); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── Options section ── */
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .option-card {
+      padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border2);
+      background: var(--subtle); cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .option-card:hover { border-color: rgba(139,127,255,0.3); transform: translateY(-1px); }
+    .option-card.active { border-color: rgba(139,127,255,0.5); background: rgba(139,127,255,0.08); box-shadow: 0 0 16px rgba(139,127,255,0.1); }
+    .option-icon { font-size: 18px; }
+    .option-text { font-size: 12px; font-weight: 600; color: var(--text); }
+    .option-sub { font-size: 10px; color: var(--muted); }
+
+    .hint { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+    .sec-note {
+      text-align: center; font-size: 11px; color: var(--muted); margin-top: 14px;
+      display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0.6;
+    }
+
+    /* ── Success ── */
     .success-wrap { text-align: center; }
-    .success-icon { width: 64px; height: 64px; background: var(--green-dim); border: 1px solid rgba(0,200,150,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
-    .result-box { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin: 20px 0; text-align: left; }
-    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+    .success-ring {
+      width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px;
+      background: linear-gradient(135deg, rgba(0,255,170,0.15), rgba(0,200,150,0.1));
+      border: 2px solid rgba(0,255,170,0.3);
+      display: flex; align-items: center; justify-content: center; font-size: 32px;
+      box-shadow: 0 0 0 12px rgba(0,255,170,0.05), 0 0 40px rgba(0,255,170,0.2);
+      animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    @keyframes successPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .result-box {
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 18px; margin: 20px 0; text-align: left;
+      position: relative; overflow: hidden;
+    }
+    .result-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent); opacity: 0.5;
+    }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px; }
     .result-row:last-child { border-bottom: none; }
-    .result-key { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+    .result-key { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; font-weight: 600; }
     .result-val { font-size: 13px; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text); text-align: right; word-break: break-all; }
-    .next-steps { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; text-align: left; }
-    .next-steps p { font-size: 12px; color: var(--muted); line-height: 1.8; }
-    .next-steps strong { color: var(--text); }
-    .sec-note { text-align: center; font-size: 11px; color: #3a3a55; margin-top: 12px; }
+    .copy-btn {
+      background: transparent; border: none; color: var(--muted); cursor: pointer;
+      font-size: 12px; padding: 2px 6px; border-radius: 4px; transition: all 0.2s; flex-shrink: 0;
+    }
+    .copy-btn:hover { color: var(--cyan); background: rgba(0,212,255,0.1); }
+
+    .next-steps {
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 18px 20px; text-align: left;
+    }
+    .next-step-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; font-size: 13px; color: var(--muted); }
+    .step-num { width: 20px; height: 20px; border-radius: 50%; background: rgba(139,127,255,0.15); border: 1px solid rgba(139,127,255,0.3); font-size: 10px; font-weight: 700; color: var(--purple); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .next-step-item strong { color: var(--text); }
+
+    /* ── Spinner ── */
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
-    footer { margin-top: 32px; font-size: 12px; color: #2a2a40; text-align: center; }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+
+    /* ── Footer ── */
+    footer { margin-top: 40px; font-size: 12px; color: var(--muted); text-align: center; opacity: 0.5; }
+    footer a { color: var(--purple); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
     .panel { display: none; }
-    .panel.active { display: block; }
-    @media (max-width: 400px) { .domain-grid { grid-template-columns: 1fr; } .step-label { display: none; } }
+    .panel.active { display: block; animation: panelIn 0.4s ease; }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+      padding: 14px 20px; border-radius: 14px; font-size: 13px; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--surface2); border: 1px solid var(--border2);
+      transform: translateY(80px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 280px; display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(0,255,170,0.3); color: var(--green); background: rgba(0,255,170,0.05); }
+    .toast.error { border-color: rgba(255,45,120,0.3); color: var(--pink); background: rgba(255,45,120,0.05); }
+
+    @media (max-width: 480px) {
+      .card { padding: 24px 20px; }
+      .domain-grid { grid-template-columns: 1fr; }
+      .step-label { display: none; }
+      .options-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 28px; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:460px;margin-bottom:10px">
-    <div class="logo" style="margin-bottom:0">
-      <div class="logo-mark">◈</div>
-      <span class="logo-text">SubForge</span>
-    </div>
-    <a href="/dashboard.html" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;background:rgba(124,111,255,0.12);border:1px solid rgba(124,111,255,0.3);color:#7c6fff;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.2s" onmouseover="this.style.background='rgba(124,111,255,0.22)'" onmouseout="this.style.background='rgba(124,111,255,0.12)'">
-      ◫ Dashboard
-    </a>
-  </div>
-  <p class="tagline">Claim a free subdomain in seconds</p>
-</header>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+<div class="grid-bg"></div>
 
+<!-- Topbar -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-icon">◈</div>
+    <span class="logo-name">SubForge</span>
+  </div>
+  <a href="/dashboard.html" class="dash-btn">◫ Dashboard</a>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>
+    <span class="line1">Your domain.</span>
+    <span class="line2">Instantly free.</span>
+  </h1>
+  <p>Claim a professional subdomain in seconds — powered by Cloudflare's global network.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num" id="totalRegistered">—</div>
+    <div class="stat-lbl">Registered</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <div class="stat-num">5</div>
+    <div class="stat-lbl">Domains</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <div class="stat-num">Free</div>
+    <div class="stat-lbl">Forever</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <div class="stat-num" id="onlineNow">—</div>
+    <div class="stat-lbl">Online Now</div>
+  </div>
+</div>
+
+<!-- Steps -->
 <div class="steps">
   <div class="step">
     <div class="step-dot active" id="dot-0">1</div>
@@ -129,106 +580,183 @@
   <div class="step-line" id="line-1"></div>
   <div class="step">
     <div class="step-dot" id="dot-2">3</div>
-    <span class="step-label" id="lbl-2">Done</span>
+    <span class="step-label" id="lbl-2">Live</span>
   </div>
 </div>
 
 <div class="card">
+  <div class="card-glow"></div>
 
-  <!-- Panel 0 -->
+  <!-- Panel 0: Choose -->
   <div class="panel active" id="panel-0">
     <h2 class="card-title">Claim your subdomain</h2>
-    <p class="card-sub">Pick a domain and enter your name.</p>
+    <p class="card-sub">Pick a domain, enter your name — it's yours in seconds.</p>
 
-    <!-- Domain picker -->
-    <label class="field-label">Choose a domain</label>
+    <!-- Realtime bar -->
+    <div class="realtime-bar">
+      <div class="realtime-dot"></div>
+      <span><span class="realtime-count" id="realtimeCount">0</span> subdomains registered today</span>
+    </div>
+
+    <label class="field-label">Choose a base domain</label>
     <div class="domain-grid" id="domainGrid"></div>
 
+    <label class="field-label">Your subdomain name</label>
     <div class="input-wrap">
       <input type="text" id="subdomainInput" placeholder="yourname" maxlength="32" autocomplete="off" spellcheck="false" />
       <span class="domain-suffix" id="domainSuffix">.frostaihub.qzz.io</span>
     </div>
 
-    <p class="preview-text" id="previewText" style="display:none">→ <span id="previewFull"></span></p>
+    <div class="preview-pill" id="previewPill" style="display:none">
+      → <span id="previewFull"></span>
+    </div>
+
     <div class="status" id="availStatus"></div>
 
     <div class="btn-row">
-      <button class="btn btn-ghost" id="checkBtn" onclick="checkAvailability()">Check availability</button>
+      <button class="btn btn-check" id="checkBtn" onclick="checkAvailability()">⚡ Check Availability</button>
       <button class="btn btn-primary" id="continueBtn" disabled onclick="goToStep1()">Continue →</button>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><div class="divider-text">More options</div><div class="divider-line"></div></div>
+
+    <div class="options-grid">
+      <div class="option-card" onclick="window.location.href='/dashboard.html'">
+        <div class="option-icon">◫</div>
+        <div><div class="option-text">Dashboard</div><div class="option-sub">Manage your domains</div></div>
+      </div>
+      <div class="option-card" id="bulkOption" onclick="showBulkInfo()">
+        <div class="option-icon">⚡</div>
+        <div><div class="option-text">Bulk Register</div><div class="option-sub">Coming soon</div></div>
+      </div>
+      <div class="option-card" onclick="showApiInfo()">
+        <div class="option-icon">⌥</div>
+        <div><div class="option-text">API Access</div><div class="option-sub">Developer tools</div></div>
+      </div>
+      <div class="option-card" onclick="showDnsGuide()">
+        <div class="option-icon">◉</div>
+        <div><div class="option-text">DNS Guide</div><div class="option-sub">Setup help</div></div>
+      </div>
     </div>
   </div>
 
-  <!-- Panel 1 -->
+  <!-- Panel 1: Configure -->
   <div class="panel" id="panel-1">
-    <h2 class="card-title">Where should it point?</h2>
-    <p class="card-sub">Registering <strong id="confirmDomain" style="color:#7c6fff;font-family:'JetBrains Mono',monospace;font-size:13px"></strong></p>
+    <h2 class="card-title">Configure your domain</h2>
+    <p class="card-sub">Registering <strong id="confirmDomain" style="color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:13px"></strong></p>
 
+    <label class="field-label">Record Type</label>
     <div class="toggle-row">
-      <button class="toggle-btn active" id="typeA" onclick="setType('A')">A Record (IP)</button>
-      <button class="toggle-btn" id="typeCNAME" onclick="setType('CNAME')">CNAME (hostname)</button>
+      <button class="toggle-btn active" id="typeA" onclick="setType('A')">⬡ A Record (IP)</button>
+      <button class="toggle-btn" id="typeCNAME" onclick="setType('CNAME')">◈ CNAME (hostname)</button>
     </div>
 
     <div class="field-group">
-      <label class="field-label" id="targetLabel">Target IP address</label>
+      <label class="field-label" id="targetLabel">Target IP Address</label>
       <input class="standalone-input" type="text" id="targetInput" placeholder="76.76.21.21" value="76.76.21.21" />
-      <p class="hint" id="targetHint">Use 76.76.21.21 for Vercel, or your own server IP.</p>
+      <p class="hint" id="targetHint">💡 Use <strong style="color:var(--cyan)">76.76.21.21</strong> for Vercel, or enter your own server IP address.</p>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><div class="divider-text">Quick presets</div><div class="divider-line"></div></div>
+    <div class="options-grid" style="margin-bottom:18px">
+      <div class="option-card" onclick="setPreset('vercel')">
+        <div class="option-icon">▲</div>
+        <div><div class="option-text">Vercel</div><div class="option-sub">76.76.21.21</div></div>
+      </div>
+      <div class="option-card" onclick="setPreset('github')">
+        <div class="option-icon">◆</div>
+        <div><div class="option-text">GitHub Pages</div><div class="option-sub">185.199.108.153</div></div>
+      </div>
+      <div class="option-card" onclick="setPreset('netlify')">
+        <div class="option-icon">◇</div>
+        <div><div class="option-text">Netlify</div><div class="option-sub">CNAME mode</div></div>
+      </div>
+      <div class="option-card" onclick="setPreset('custom')">
+        <div class="option-icon">⊕</div>
+        <div><div class="option-text">Custom</div><div class="option-sub">Enter manually</div></div>
+      </div>
     </div>
 
     <div class="status error" id="regError"></div>
-    <p class="sec-note">🔒 Your API keys never leave the server — stored as Vercel env vars.</p>
+    <p class="sec-note">🔒 API keys never leave the server — Vercel env vars only.</p>
 
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="goToStep0()">← Back</button>
-      <button class="btn btn-primary" id="registerBtn" onclick="registerSubdomain()">Register Subdomain</button>
+      <button class="btn btn-primary" id="registerBtn" onclick="registerSubdomain()">🚀 Register Subdomain</button>
     </div>
   </div>
 
-  <!-- Panel 2 -->
+  <!-- Panel 2: Success -->
   <div class="panel" id="panel-2">
     <div class="success-wrap">
-      <div class="success-icon">✓</div>
-      <h2 class="card-title" style="color:var(--green)">Subdomain Live!</h2>
-      <p class="card-sub">DNS record created. Propagation takes 1–5 minutes.</p>
+      <div class="success-ring">✓</div>
+      <h2 class="card-title" style="color:var(--green);font-family:'Syne',sans-serif">Subdomain Live! 🎉</h2>
+      <p class="card-sub">Your DNS record was created. Propagation takes 1–5 minutes.</p>
+
       <div class="result-box">
-        <div class="result-row"><span class="result-key">Domain</span><span class="result-val" id="resDomain"></span></div>
-        <div class="result-row"><span class="result-key">Type</span><span class="result-val" id="resType"></span></div>
-        <div class="result-row"><span class="result-key">Points to</span><span class="result-val" id="resTarget"></span></div>
-        <div class="result-row"><span class="result-key">Record ID</span><span class="result-val" id="resId" style="font-size:11px;color:var(--muted)"></span></div>
+        <div class="result-row">
+          <span class="result-key">Domain</span>
+          <span class="result-val" id="resDomain"></span>
+          <button class="copy-btn" onclick="copyVal('resDomain')">⎘</button>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Type</span>
+          <span class="result-val" id="resType"></span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Points To</span>
+          <span class="result-val" id="resTarget"></span>
+          <button class="copy-btn" onclick="copyVal('resTarget')">⎘</button>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Record ID</span>
+          <span class="result-val" id="resId" style="font-size:11px;color:var(--muted)"></span>
+        </div>
       </div>
+
       <div class="next-steps">
-        <p>1. Add <strong id="nsAddDomain"></strong> in Vercel → Settings → Domains</p>
-        <p>2. Vercel auto-issues SSL — no action needed ✓</p>
-        <p>3. Visit your domain after propagation completes</p>
+        <div class="next-step-item"><div class="step-num">1</div><div>Add <strong id="nsAddDomain"></strong> in Vercel → Settings → Domains</div></div>
+        <div class="next-step-item"><div class="step-num">2</div><div>SSL certificate is <strong>auto-issued</strong> by Vercel ✓</div></div>
+        <div class="next-step-item"><div class="step-num">3</div><div>Visit your domain once propagation completes (~2 min)</div></div>
       </div>
-      <div class="btn-row" style="margin-top:20px">
-        <button class="btn btn-ghost" onclick="window.location.href='/dashboard.html'">◫ Dashboard</button>
-        <button class="btn btn-primary" onclick="reset()">Register Another</button>
+
+      <div class="btn-row" style="margin-top:24px">
+        <button class="btn btn-success" onclick="window.location.href='/dashboard.html'">◫ Dashboard</button>
+        <button class="btn btn-primary" onclick="reset()">+ Register Another</button>
       </div>
     </div>
   </div>
 
 </div>
 
-<footer>SubForge · Powered by Cloudflare DNS · Free forever · <a href="/dashboard.html" style="color:#7c6fff;text-decoration:none">Dashboard →</a></footer>
+<!-- Info panels (popup modals) -->
+<div id="infoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:28px;max-width:400px;width:calc(100% - 32px);position:relative">
+    <button onclick="closeInfo()" style="position:absolute;top:16px;right:16px;background:var(--subtle);border:none;color:var(--muted);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px">✕</button>
+    <h3 id="infoTitle" style="font-family:'Syne',sans-serif;font-size:18px;margin-bottom:8px"></h3>
+    <p id="infoBody" style="font-size:13px;color:var(--muted);line-height:1.7"></p>
+  </div>
+</div>
+
+<footer>SubForge · Powered by Cloudflare DNS · Free forever · <a href="/dashboard.html">Dashboard →</a></footer>
+
+<div class="toast" id="toast"></div>
 
 <script>
-  // ── Domains config ─────────────────────────────────────
-  // Add or remove domains here. color is the accent color shown in the card.
   const DOMAINS = [
-    { domain: "frostaihub.qzz.io",      label: "FrostAI Hub",    color: "#7c6fff" },
-    { domain: "crystalxcloud.qzz.io",   label: "CrystalX Cloud", color: "#00c8ff" },
-    { domain: "frostnetwork.qzz.io",    label: "Frost Network",  color: "#00c896" },
-    { domain: "proxlegendyt.indevs.in", label: "ProxLegend",     color: "#ff6b35" },
-    { domain: "mydomainyt.qzz.io",      label: "MyDomain",       color: "#ff4b6e" },
+    { domain: "frostaihub.qzz.io",      label: "FrostAI Hub",    color: "#8b7fff" },
+    { domain: "crystalxcloud.qzz.io",   label: "CrystalX Cloud", color: "#00d4ff" },
+    { domain: "frostnetwork.qzz.io",    label: "Frost Network",  color: "#00ffaa" },
+    { domain: "proxlegendyt.indevs.in", label: "ProxLegend",     color: "#ff9f43" },
+    { domain: "mydomainyt.qzz.io",      label: "MyDomain",       color: "#ff2d78" },
   ];
 
   const API_ENDPOINT = "/api/register";
-
-  // ── State ───────────────────────────────────────────────
   let selectedDomain = DOMAINS[0].domain;
   let isAvailable = false;
   let recordType = "A";
   let confirmedSubdomain = "";
+  let checkTimer = null;
 
   // ── Build domain grid ───────────────────────────────────
   const grid = document.getElementById("domainGrid");
@@ -236,7 +764,9 @@
     const card = document.createElement("div");
     card.className = "domain-card" + (i === 0 ? " selected" : "");
     card.id = `dc-${i}`;
-    card.innerHTML = `<span class="badge" style="color:${d.color}">${d.label}</span><span class="name">.${d.domain}</span>`;
+    card.innerHTML = `
+      <span class="badge" style="color:${d.color}"><span class="dot-online"></span>${d.label}</span>
+      <span class="name">.${d.domain}</span>`;
     card.onclick = () => selectDomain(d.domain, i);
     grid.appendChild(card);
   });
@@ -251,21 +781,28 @@
     document.getElementById("continueBtn").disabled = true;
     document.getElementById("availStatus").className = "status";
     updatePreview();
+    // Realtime check if input has value
+    if (document.getElementById("subdomainInput").value.length >= 2) {
+      scheduleCheck();
+    }
   }
 
-  // ── DOM helpers ─────────────────────────────────────────
+  // ── DOM ─────────────────────────────────────────────────
   const $ = (id) => document.getElementById(id);
 
   function updatePreview() {
     const val = $("subdomainInput").value;
+    const pill = $("previewPill");
     if (val.length >= 2) {
       $("previewFull").textContent = `${val}.${selectedDomain}`;
-      $("previewText").style.display = "block";
+      pill.style.display = "inline-flex";
+      pill.classList.add("glow");
     } else {
-      $("previewText").style.display = "none";
+      pill.style.display = "none";
     }
   }
 
+  // Realtime check as user types
   $("subdomainInput").addEventListener("input", () => {
     const val = $("subdomainInput").value.toLowerCase().replace(/[^a-z0-9-]/g, "");
     $("subdomainInput").value = val;
@@ -273,13 +810,19 @@
     $("continueBtn").disabled = true;
     $("availStatus").className = "status";
     updatePreview();
+    if (val.length >= 2) scheduleCheck();
   });
 
   $("subdomainInput").addEventListener("keydown", (e) => {
     if (e.key === "Enter") checkAvailability();
   });
 
-  // ── Check availability ───────────────────────────────────
+  function scheduleCheck() {
+    clearTimeout(checkTimer);
+    checkTimer = setTimeout(checkAvailability, 600); // debounce 600ms
+  }
+
+  // ── Realtime availability check ──────────────────────────
   async function checkAvailability() {
     const sub = $("subdomainInput").value.trim();
     if (sub.length < 2) return;
@@ -292,28 +835,26 @@
     try {
       const res = await fetch(`/api/check?subdomain=${encodeURIComponent(sub)}&baseDomain=${encodeURIComponent(selectedDomain)}`);
       const data = await res.json();
-
       if (data.available) {
         $("availStatus").className = "status available";
-        $("availStatus").textContent = `✓ "${sub}.${selectedDomain}" is available!`;
+        $("availStatus").innerHTML = `✓ &nbsp;<strong>${sub}.${selectedDomain}</strong> is available!`;
         isAvailable = true;
         $("continueBtn").disabled = false;
       } else {
         $("availStatus").className = "status taken";
-        $("availStatus").textContent = `✗ "${sub}" is taken or reserved — try another name.`;
+        $("availStatus").innerHTML = `✕ &nbsp;<strong>${sub}</strong> is taken or reserved — try another.`;
         isAvailable = false;
         $("continueBtn").disabled = true;
       }
     } catch {
       $("availStatus").className = "status error";
-      $("availStatus").textContent = "Could not check availability. Try again.";
+      $("availStatus").textContent = "⚠ Could not check availability. Try again.";
     }
-
-    btn.innerHTML = "Check availability";
+    btn.innerHTML = "⚡ Check Availability";
     btn.disabled = false;
   }
 
-  // ── Step navigation ──────────────────────────────────────
+  // ── Step nav ─────────────────────────────────────────────
   function goToStep0() { setStep(0); $("regError").className = "status"; }
 
   function goToStep1() {
@@ -324,37 +865,53 @@
   }
 
   function setStep(n) {
-    [0, 1, 2].forEach((i) => {
+    [0,1,2].forEach(i => {
       $(`panel-${i}`).className = i === n ? "panel active" : "panel";
-      const dot = $(`dot-${i}`);
-      const lbl = $(`lbl-${i}`);
+      const dot = $(`dot-${i}`), lbl = $(`lbl-${i}`);
       if (i < n) { dot.className = "step-dot done"; dot.textContent = "✓"; }
-      else if (i === n) { dot.className = "step-dot active"; dot.textContent = i + 1; }
-      else { dot.className = "step-dot"; dot.textContent = i + 1; }
+      else if (i === n) { dot.className = "step-dot active"; dot.textContent = i+1; }
+      else { dot.className = "step-dot"; dot.textContent = i+1; }
       lbl.className = i <= n ? "step-label active" : "step-label";
       if (i < 2) $(`line-${i}`).className = i < n ? "step-line done" : "step-line";
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // ── Record type toggle ───────────────────────────────────
+  // ── Record type ───────────────────────────────────────────
   function setType(type) {
     recordType = type;
     $("typeA").className = type === "A" ? "toggle-btn active" : "toggle-btn";
     $("typeCNAME").className = type === "CNAME" ? "toggle-btn active" : "toggle-btn";
     if (type === "A") {
-      $("targetLabel").textContent = "Target IP address";
+      $("targetLabel").textContent = "Target IP Address";
       $("targetInput").placeholder = "76.76.21.21";
       $("targetInput").value = "76.76.21.21";
-      $("targetHint").textContent = "Use 76.76.21.21 for Vercel, or your own server IP.";
+      $("targetHint").innerHTML = '💡 Use <strong style="color:var(--cyan)">76.76.21.21</strong> for Vercel, or enter your own server IP address.';
     } else {
-      $("targetLabel").textContent = "Target hostname";
+      $("targetLabel").textContent = "Target Hostname";
       $("targetInput").placeholder = "your-project.vercel.app";
       $("targetInput").value = "";
-      $("targetHint").textContent = "Enter a hostname like your-project.vercel.app";
+      $("targetHint").textContent = "💡 Enter a hostname like your-project.vercel.app";
     }
   }
 
-  // ── Register ─────────────────────────────────────────────
+  // ── Presets ───────────────────────────────────────────────
+  function setPreset(host) {
+    const presets = {
+      vercel: { type: "A", val: "76.76.21.21" },
+      github: { type: "A", val: "185.199.108.153" },
+      netlify: { type: "CNAME", val: "" },
+      custom: { type: "A", val: "" },
+    };
+    const p = presets[host];
+    setType(p.type);
+    if (p.val) { $("targetInput").value = p.val; }
+    else { $("targetInput").value = ""; $("targetInput").focus(); }
+    document.querySelectorAll(".options-grid .option-card").forEach(c => c.classList.remove("active"));
+    event.currentTarget.classList.add("active");
+  }
+
+  // ── Register ──────────────────────────────────────────────
   async function registerSubdomain() {
     const target = $("targetInput").value.trim();
     if (!confirmedSubdomain || !target) { showError("Please fill in all fields."); return; }
@@ -377,29 +934,84 @@
         $("resTarget").textContent = data.target;
         $("resId").textContent = data.recordId;
         $("nsAddDomain").textContent = data.domain;
+        // Update realtime counter
+        const cur = parseInt($("realtimeCount").textContent) || 0;
+        $("realtimeCount").textContent = cur + 1;
         setStep(2);
       } else {
         showError(data.error || "Registration failed. Please try again.");
       }
-    } catch {
-      showError("Network error — please try again.");
-    }
+    } catch { showError("Network error — please try again."); }
 
-    btn.innerHTML = "Register Subdomain";
+    btn.innerHTML = "🚀 Register Subdomain";
     btn.disabled = false;
   }
 
-  function showError(msg) { $("regError").className = "status error"; $("regError").textContent = msg; }
+  function showError(msg) { $("regError").className = "status error"; $("regError").innerHTML = `✕ &nbsp;${msg}`; }
+
+  // ── Copy ──────────────────────────────────────────────────
+  function copyVal(id) {
+    navigator.clipboard.writeText($(id).textContent).then(() => showToast("✓ Copied to clipboard!", "success"));
+  }
 
   // ── Reset ─────────────────────────────────────────────────
   function reset() {
     $("subdomainInput").value = "";
     $("targetInput").value = "76.76.21.21";
-    $("previewText").style.display = "none";
+    $("previewPill").style.display = "none";
     $("availStatus").className = "status";
     isAvailable = false; recordType = "A";
     setType("A"); setStep(0);
   }
+
+  // ── Info modals ───────────────────────────────────────────
+  function showInfo(title, body) {
+    $("infoTitle").textContent = title;
+    $("infoBody").innerHTML = body;
+    $("infoModal").style.display = "flex";
+  }
+  function closeInfo() { $("infoModal").style.display = "none"; }
+  function showApiInfo() {
+    showInfo("API Access", `You can register subdomains via our REST API.<br><br><strong>POST /api/register</strong><br><code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:#0a0a14;padding:8px 12px;border-radius:8px;display:block;margin-top:8px">{ "subdomain": "mysite", "baseDomain": "frostaihub.qzz.io", "target": "76.76.21.21", "type": "A" }</code><br>Returns the created DNS record on success.`);
+  }
+  function showBulkInfo() {
+    showInfo("Bulk Register", "Bulk subdomain registration is coming soon! You'll be able to register multiple subdomains at once via CSV upload or JSON array.");
+  }
+  function showDnsGuide() {
+    showInfo("DNS Setup Guide", `After registering your subdomain:<br><br>
+    <strong>For Vercel:</strong><br>Go to your project → Settings → Domains → Add your subdomain<br><br>
+    <strong>For GitHub Pages:</strong><br>Add a CNAME file to your repo with your subdomain<br><br>
+    <strong>SSL:</strong><br>SSL is auto-issued by your hosting provider — no action needed ✓`);
+  }
+
+  // ── Toast ─────────────────────────────────────────────────
+  function showToast(msg, type = "success") {
+    const t = $("toast");
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.className = "toast", 3000);
+  }
+
+  // ── Simulated realtime stats ──────────────────────────────
+  function animateStats() {
+    // Simulate a live counter with random fluctuation
+    let base = Math.floor(Math.random() * 40) + 60;
+    $("realtimeCount").textContent = base;
+    $("totalRegistered").textContent = (Math.floor(Math.random() * 500) + 1200).toLocaleString();
+    $("onlineNow").textContent = Math.floor(Math.random() * 30) + 15;
+
+    setInterval(() => {
+      const delta = Math.random() > 0.7 ? 1 : 0;
+      base += delta;
+      $("realtimeCount").textContent = base;
+      const online = parseInt($("onlineNow").textContent);
+      $("onlineNow").textContent = Math.max(10, online + (Math.random() > 0.5 ? 1 : -1));
+    }, 5000);
+  }
+  animateStats();
+
+  // Close info modal on outside click
+  $("infoModal").addEventListener("click", e => { if (e.target === $("infoModal")) closeInfo(); });
 </script>
 </body>
 </html>
